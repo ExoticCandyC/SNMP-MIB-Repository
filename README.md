@@ -7,8 +7,8 @@ My suggestion is the ireasoning MIB browser, as it is fast, lightweight and supp
 https://www.ireasoning.com/mibbrowser.shtml
 
 # SNMP Project Files
-| Project Name | MIB file name |
-| --- | --- |
-| MIB dependencies | EC-Base.mib |
-| SNMP monitoring | EC-SNMP-Monitoring.mib |
+| Project Name | MIB file name | Project Version |
+| --- | --- | --- |
+| MIB dependencies | EC-Base.mib | v1.0.0 |
+| SNMP monitoring | EC-SNMP-Monitoring.mib | v4.0.1a |
 
