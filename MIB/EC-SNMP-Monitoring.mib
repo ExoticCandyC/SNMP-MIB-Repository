@@ -1,0 +1,2051 @@
+
+--------------------------------------------------------------------------------
+-- Copyright (C) 2021-2022  - Mohammad Kazem Azizollahi                       --
+--                                                                            --
+-- This program is free software: you can redistribute it and/or modify       --
+-- it under the terms of the GNU General Public License as published by       --
+-- the Free Software Foundation, either version 3 of the License, or any      --
+-- later version.                                                             --
+--                                                                            --
+-- This program is distributed in the hope that it will be useful,            --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of             --
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the               --
+-- GNU General Public License for more details.                               --
+--                                                                            --
+-- You should have received a copy of the GNU General Public License          --
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.      --
+--                                                                            --
+-- Only the public MIB files are under GNI GPL3 protection. The rest of this  --
+-- project is the proprietary mental property of the developer, AKA           --
+-- "Mohammad Kazem Azizollahi" and you are not allowed to distribute it       --
+-- without a written letter of consent.                                       --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- @Developer       https://github.com/ExoticCandyC                           --
+-- @CreationDate    July 6th, 2022                                            --
+-- @FileName        EC-SNMP-Monitoring.mib                                    --
+-- @description     This file includes the basic definitions of the ASN.1     --
+--                  data tree. Some of them are implemented in SNMPv2-MIB     --
+--                  module but some MIB browsers don't have that module by    --
+--                  default and manual intervention is required. So I just    --
+--                  simply make all the definitions in this file and use      --
+--                  this as a basis for all my SNMP enabled devices.          --
+--------------------------------------------------------------------------------
+
+EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                               Import Section                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- The imports sections
+    IMPORTS
+        mgmt,
+        snmpV2,
+        private,
+        EC-General-Devices,
+        EC-Module-Identities,
+        FLOAT,
+        UTCTime,
+        TIME-OF-DAY,
+        DATE,
+        TIME,
+        IpAddress,
+        PortNumber,
+        Counter32,
+        Gauge32,
+        Opaque,
+        Counter64,
+        DisplayString,
+        PhysAddress,
+        MacAddress,
+        Trap-Severity-Level
+                FROM EC-Base
+        MODULE-IDENTITY,
+        OBJECT-TYPE,
+        NOTIFICATION-TYPE,
+        TimeTicks
+                FROM SNMPv2-SMI
+        MODULE-COMPLIANCE,
+        OBJECT-GROUP,
+        NOTIFICATION-GROUP
+                FROM SNMPv2-CONF
+    ;
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                              Module Identity                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-Module-Identities(5)
+    EC-SNMP-Monitoring MODULE-IDENTITY
+        LAST-UPDATED "202207060000Z"
+        ORGANIZATION "Mohammad Kazem Azizollahi"
+        CONTACT-INFO
+                "GitHub:     https://github.com/ExoticCandyC
+                 EMail:      mk.aziz.author@gmail.com
+                "
+        DESCRIPTION
+                "The MIB file for the SNMP monitoring project.
+
+                 Copyright (C) 2021-2022 - Mohammad Kazem Azizollahi
+                 This file is protected under GNU GPL 3 licence.
+                ."
+        REVISION     "202207060000Z"
+        DESCRIPTION
+                "Initial version created"
+        ::= { EC-Module-Identities 1 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                             Project MIB Root                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.ExoticCandy-MIB(59097).EC-General-Devices(1)
+    SNMP-Monitoring             OBJECT IDENTIFIER ::= { EC-General-Devices 1 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                           Project MIB Structure                            --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    System-Status               OBJECT IDENTIFIER ::= { SNMP-Monitoring    1 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    SNMP-Manager                OBJECT IDENTIFIER ::= { SNMP-Monitoring    2 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Energy-Analyzer             OBJECT IDENTIFIER ::= { SNMP-Monitoring    3 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Web-Service                 OBJECT IDENTIFIER ::= { SNMP-Monitoring    4 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Cellular                    OBJECT IDENTIFIER ::= { SNMP-Monitoring    5 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Traps                       OBJECT IDENTIFIER ::= { SNMP-Monitoring    6 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Traps-Settings              OBJECT IDENTIFIER ::= { SNMP-Monitoring    7 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Device-Settings             OBJECT IDENTIFIER ::= { SNMP-Monitoring    8 }
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+    Device-Info                 OBJECT IDENTIFIER ::= { SNMP-Monitoring    9 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                               System Status                                --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1)
+    Enviroment                  OBJECT IDENTIFIER ::= { System-Status      1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1)
+    RTCC                        OBJECT IDENTIFIER ::= { System-Status      2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1)
+    Actuators                   OBJECT IDENTIFIER ::= { System-Status      3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1)
+    Inputs                      OBJECT IDENTIFIER ::= { System-Status      4 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                         System Status : Enviroment                         --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Enviroment(1)
+    Temperature OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The temperature of the environment calculated by the SHT20
+             sensor module. The data unit is celsius degrees."
+        ::= { Enviroment 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Enviroment(1)
+    Humidity OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The humidity of the environment calculated by the SHT20
+             sensor module."
+        ::= { Enviroment 2 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                            System Status : RTCC                            --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).RTCC(2)
+    RTCC-Categorized            OBJECT IDENTIFIER ::= { RTCC               2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).RTCC(2)
+    Clock-Calendar OBJECT-TYPE
+        SYNTAX  TIME
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The combination of date, time and time zone as understood
+             by the device's realtime clock and calendar."
+        ::= { RTCC 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.System-Status(1).RTCC(2).RTCC-Categorized(2)
+    Clock OBJECT-TYPE
+        SYNTAX  TIME-OF-DAY
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The time of day as understood by the device's internal clock.
+             Please not that this object is a subset of RTCC object."
+        ::= { RTCC-Categorized 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.System-Status(1).RTCC(2).RTCC-Categorized(2)
+    Calendar OBJECT-TYPE
+        SYNTAX  DATE
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The date of year as understood by the device's internal calendar.
+             Please not that this object is a subset of RTCC object."
+        ::= { RTCC-Categorized 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.System-Status(1).RTCC(2).RTCC-Categorized(2)
+    Time-Zone OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE (6))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The time-zone set for the device's internal clock.
+             The format is +HH:MM or -HH:MM
+             where      HH   - time zone hours offset (-13 through +13)
+                        MM   - time zone minutes offset (00 or 30)
+             Note that both numbers must be padded with 0.
+             For example UTC is represented as +00:00"
+        ::= { RTCC-Categorized 3 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                          System Status : Actuators                         --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Actuators(3)
+    actuatorCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The total number of actuators the device has."
+        ::= { Actuators 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Actuators(3)
+    actuatorTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF actuatorEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the actuators controlled by the device and
+             all the informations about them."
+        ::= { Actuators 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.System-Status(1).Actuators(3).actuatorTable(2)
+    actuatorEntry OBJECT-TYPE
+        SYNTAX  actuatorEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An actuator entry containing all the information about the
+             actuator status."
+        INDEX
+        {
+            actuatorIndex
+        }
+        ::= { actuatorTable 1 }
+
+    actuatorEntry ::=
+        SEQUENCE {
+            actuatorIndex       INTEGER,
+            actuatorType        INTEGER,
+            actuatorName        DisplayString,
+            actuatorValue       INTEGER,
+            actuatorStatus      INTEGER
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Actuators(3).actuatorEntry(1)
+    actuatorIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for each actuator. Its value
+            ranges between 1 and the value of actuatorCount."
+        ::= { actuatorEntry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Actuators(3).actuatorEntry(1)
+    actuatorType OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Relay(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The type of the actuator."
+        ::= { actuatorEntry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Actuators(3).actuatorEntry(1)
+    actuatorName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (4..20))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "A textual string containing the chosen name of the
+             actuator."
+        ::= { actuatorEntry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Actuators(3).actuatorEntry(1)
+    actuatorValue OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Deactive(0),
+            Active(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The value of the actuator."
+        ::= { actuatorEntry 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Actuators(3).actuatorEntry(1)
+    actuatorStatus OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Manual(0),
+            Automatic(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The status of the actuator. This variable dictates if the
+             actuator follows the predefined algorithms or it is being
+             controlled manually."
+        ::= { actuatorEntry 5 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                           System Status : Inputs                           --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Inputs(4)
+    inputCount OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  mandatory
+        DESCRIPTION
+            "The total number of inputs the device has."
+        ::= { Inputs 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).System-Status(1).Inputs(4)
+    inputTable OBJECT-TYPE
+        SYNTAX  SEQUENCE OF inputEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the inputs managed by the device and
+             all the informations about them."
+        ::= { Inputs 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.System-Status(1).Actuators(3).Inputs(4)
+    inputEntry OBJECT-TYPE
+        SYNTAX  inputEntry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An input entry containing all the information about the
+             input status."
+        INDEX
+        {
+            inputIndex
+        }
+        ::= { inputTable 1 }
+
+    inputEntry ::=
+        SEQUENCE {
+            inputIndex          INTEGER,
+            inputType           INTEGER,
+            inputName           DisplayString,
+            inputStatus         INTEGER
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Inputs(4).inputEntry(1)
+    inputIndex OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for each input. Its value
+            ranges between 1 and the value of inputCount."
+        ::= { inputEntry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Inputs(4).inputEntry(1)
+    inputType OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Digital-Input(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The type of the input."
+        ::= { inputEntry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Inputs(4).inputEntry(1)
+    inputName OBJECT-TYPE
+        SYNTAX  DisplayString (SIZE (4..20))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "A textual string containing the chosen name of the
+             input."
+        ::= { inputEntry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.1.Actuators(3).Inputs(4).inputEntry(1)
+    inputStatus OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Deactive(0),
+            Active(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The value of the input."
+        ::= { inputEntry 4 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                                SNMP Agents                                 --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).SNMP-Manager(2)
+    Trap-Redirection-Target     OBJECT IDENTIFIER ::= { SNMP-Manager       1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Trap-Redirection-Target(1)
+    IP OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The IP address of the SNMP manager who is supposed to receive
+             forwarded traps from the agents being managed by this devide."
+        ::= { Trap-Redirection-Target 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Trap-Redirection-Target(1)
+    Port OBJECT-TYPE
+        SYNTAX  PortNumber
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 162 }
+        DESCRIPTION
+            "The port number of the SNMP manager who is supposed to receive
+             forwarded traps from the agents being managed by this devide."
+        ::= { Trap-Redirection-Target 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2)
+    Query-Interval OBJECT-TYPE
+        SYNTAX  Unsigned32
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 500 }
+        DESCRIPTION
+            "The interval between each SNMP get query in milliseconds.
+             Note that lower interval directly increases the network
+             load and can cause problems. Greater interval can cause
+             slower refresh rate for the agents' data."
+        ::= { SNMP-Manager 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2)
+    Agents-Count OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The total number of SNMP Agents the device can manage."
+        ::= { SNMP-Manager 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2)
+    Agents-Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Agent-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the SNMP agents managed by the device and
+             all the informations about them."
+        ::= { SNMP-Manager 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4)
+    Agent-Entry OBJECT-TYPE
+        SYNTAX  Agent-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An entry containing all the information about the
+             SNMP agenets managed by the device."
+        INDEX
+        {
+            Agent-Index
+        }
+        ::= { Agents-Table 1 }
+
+    Agent-Entry ::=
+        SEQUENCE {
+            Agent-Index         INTEGER,
+            Agent-IP            IpAddress,
+            Agent-Port          PortNumber
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-Index OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for each SNMP agent. Its value
+            ranges between 1 and the value of Agents-Count."
+        ::= { Agent-Entry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-IP OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The IP address of the agent by which the manager can
+             read the agent."
+        ::= { Agent-Entry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-Port OBJECT-TYPE
+        SYNTAX  PortNumber
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 161 }
+        DESCRIPTION
+            "The port number of the agent by which the manager can
+             read the agent."
+        ::= { Agent-Entry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-Name OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE (4..30))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "A textual string containing the chosen name of the
+             target."
+        ::= { Agent-Entry 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-Community-String OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE (0..50))
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { "public" }
+        DESCRIPTION
+            "The community string used to read values from the agent."
+        ::= { Agent-Entry 5 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-OID OBJECT-TYPE
+        SYNTAX  OBJECT IDENTIFIER
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The OID of the target value that should be read from the agent."
+        ::= { Agent-Entry 6 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-State OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Unreachable(0),
+            Active(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The status of the target agent."
+        ::= { Agent-Entry 6 }
+
+    -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Agents-Table(4).Agent-Entry(1)
+    Agent-Value OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE (0..30))
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The value read from the agent, represented as the string form."
+        ::= { Agent-Entry 7 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                              Energy Analyzer                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.EC-General-Devices(1).SNMP-Monitoring(1)
+--    Energy-Analyzer             OBJECT IDENTIFIER ::= { SNMP-Monitoring    3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3)
+    Query-Interval OBJECT-TYPE
+        SYNTAX  Unsigned32
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 100 }
+        DESCRIPTION
+            "The interval between each value is read, in milliseconds.
+             A lower amount can increase the refresh rate of the values,
+             but can slow down the device's performance."
+        ::= { Energy-Analyzer 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3)
+    Energy-Analyzer-State OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            Unreachable(0),
+            Active(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The status of the energy analyzer."
+       ::= { Energy-Analyzer 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3)
+    Parameters-Count OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The total number of the target values the device will query
+             from the energy analyzer."
+        ::= { Energy-Analyzer 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3)
+    Parameters-Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Parameter-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the parameters read from the energy analyzer
+             and all the informations about them."
+        ::= { Energy-Analyzer 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-Entry OBJECT-TYPE
+        SYNTAX  Parameter-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An entry containing all the information about the
+             SNMP agenets managed by the device."
+        INDEX
+        {
+            Parameter-Index
+        }
+        ::= { Parameters-Table 1 }
+
+    Parameter-Entry ::=
+        SEQUENCE {
+            Parameter-Index             INTEGER,
+            Parameter-MODBUS-Register   INTEGER,
+            Parameter-Name              DisplayString,
+            Parameter-Value             FLOAT,
+            Parameter-Unit-Name         DisplayString
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-Index OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for energy analyzer parameter. Its value
+            ranges between 1 and the value of Parameters-Count."
+        ::= { Parameter-Entry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-MODBUS-Register OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The MODBUS register of the value. It can be found on the
+             energy analyzer's datasheet."
+        ::= { Parameter-Entry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-Name OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The name of the value."
+        ::= { Parameter-Entry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-Value OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The value read from the energy analyzer."
+        ::= { Parameter-Entry 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3).Parameters-Table(4)
+    Parameter-Unit-Name OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The unit name of the given value. For example 'V' for voltage."
+        ::= { Parameter-Entry 5 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                                 Web Service                                --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Web-Service(4)
+    Web-Service-Info          OBJECT IDENTIFIER ::= { Web-Service          1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Web-Service(4)
+    Web-Service-Settings      OBJECT IDENTIFIER ::= { Web-Service          2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Settings(2)
+    Web-Service-Buzzer        OBJECT IDENTIFIER ::= { Web-Service-Settings 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Info(1)
+    Active-Connections-Count OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The total number of the currently active web service
+             connections."
+        ::= { Web-Service-Info 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Info(1)
+    Active-Connections-Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Active-Connection-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A collection of information regarding each active
+             web service connection."
+        ::= { Web-Service-Info 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Active-Connection-Entry OBJECT-TYPE
+        SYNTAX  Active-Connection-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An entry containing all the information about the
+             SNMP agenets managed by the device."
+        INDEX
+        {
+            Index
+        }
+        ::= { Active-Connections-Table 1 }
+
+    Active-Connection-Entry ::=
+        SEQUENCE {
+            Index               INTEGER,
+            Address             IpAddress,
+            Username            DisplayString,
+            Up-Time             TimeTicks,
+            Timeout             TimeTicks,
+            Terminate           INTEGER
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Index OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for energy analyzer parameter. Its value
+            ranges between 1 and the value of Parameters-Count."
+        ::= { Active-Connection-Entry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Address OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The IP address of the user on this connection."
+        ::= { Active-Connection-Entry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Username OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The username of this connection."
+        ::= { Active-Connection-Entry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Up-Time OBJECT-TYPE
+        SYNTAX  TimeTicks
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The duration that this connection is active."
+        ::= { Active-Connection-Entry 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Timeout OBJECT-TYPE
+        SYNTAX  TimeTicks
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The duration of inactivity left for this connection to be
+             suspended."
+        ::= { Active-Connection-Entry 5 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Info(1).Active-Connections-Table(2)
+    Terminate OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Keep-Alive(0),
+           Terminate(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Kick the user out if the value is set. Please note that the
+             user can still type the username and password and log back
+             in."
+        ::= { Active-Connection-Entry 6 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Settings(2)
+    Idle-Time OBJECT-TYPE
+        SYNTAX  Unsigned32 (10..3600)
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 300 }
+        DESCRIPTION
+            "The maximum time in seconds allowed for a user to be idle
+             before they are kicked out and a login is required again."
+        ::= { Web-Service-Settings 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Settings(2)
+    Max-Connections OBJECT-TYPE
+        SYNTAX  Unsigned32 (1..10)
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 2 }
+        DESCRIPTION
+            "Maximum number of simultaneous active web service connections
+             allowed. Please note that higher number of active connections
+             will directly affect the device's response time and will make
+             the device slower."
+        ::= { Web-Service-Settings 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Settings(2).Web-Service-Buzzer(1)
+    Enable OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Dictates if the buzzer login announcement works or not."
+        ::= { Web-Service-Buzzer 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Settings(2).Web-Service-Buzzer(1)
+    Beep-Count OBJECT-TYPE
+        SYNTAX  INTEGER (1..10)
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 3 }
+        DESCRIPTION
+            "Number of buzzer beeps played when a web-service login happens."
+        ::= { Web-Service-Buzzer 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Settings(2).Web-Service-Buzzer(1)
+    Beep-Duration OBJECT-TYPE
+        SYNTAX  INTEGER (30..100)
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 30 }
+        DESCRIPTION
+            "The duration of each beep in milliseconds."
+        ::= { Web-Service-Buzzer 3 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                              Cellurar Related                              --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5)
+    SIM800-Info                 OBJECT IDENTIFIER ::= { Cellular           1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5)
+    Alram-Messages              OBJECT IDENTIFIER ::= { Cellular           2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5)
+    Target-Phone-Numbers        OBJECT IDENTIFIER ::= { Cellular           3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    SIM800-Status OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Malfunctioning(0),
+           Healthy(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The status of the SIM800 module, responsible for SMS management."
+        ::= { SIM800-Info 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    SIM-Card-Status OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Not-Found(0),
+           Active(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The status of the SIM card."
+        ::= { SIM800-Info 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    Network-Registration OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Not-Registered(0),
+           Registered(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The status of network registration."
+        ::= { SIM800-Info 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    GSM-Network-Registration OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Not-Registered(0),
+           Registered(1)
+        }
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The status of GSM network registration."
+        ::= { SIM800-Info 4 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    Signal-Strength OBJECT-TYPE
+        SYNTAX  INTEGER (0..100)
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The status of GSM network registration."
+        ::= { SIM800-Info 5 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).SIM800-Info(1)
+    IMEI OBJECT-TYPE
+        SYNTAX  DisplayString
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The IMEI of the sim800 module"
+        ::= { SIM800-Info 6 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).Alram-Messages(2)
+    Maintenance-Message OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE(4..160))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+           "The text message sent to the defined phone numbers if the device
+            needs maintenance."
+        ::= { Alram-Messages 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).Alram-Messages(2)
+    Alarm-Messages-Count OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The number of SMS messages defined for alarm scenarios."
+        ::= { Alram-Messages 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Cellular(5).Alram-Messages(2)
+    Alarm-Messages-Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Alarm-Message-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the SMS messages defined for different scenarios."
+        ::= { Alram-Messages 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Alarm-Message-Entry OBJECT-TYPE
+        SYNTAX  Alarm-Message-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An entry containing the SMS message and the OID of the input
+             item that can trigger this SMS message."
+        INDEX
+        {
+            Alarm-Message-Index
+        }
+        ::= { Alarm-Messages-Table 1 }
+
+    Alarm-Message-Entry ::=
+        SEQUENCE {
+            Alarm-Message-Index         INTEGER,
+            Alarm-Message-Text          OCTET STRING,
+            Alarm-Message-Trigger       OBJECT IDENTIFIER
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Alarm-Message-Index OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for each sms message. Its value
+            ranges between 1 and the value of Alarm-Messages-Count."
+        ::= { Alarm-Message-Entry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Alarm-Message-Text OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE(4..160))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The text message to be sent via SMS if a certain alarm
+             scenario happens."
+        ::= { Alarm-Message-Entry 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Alarm-Message-Trigger OBJECT-TYPE
+        SYNTAX  OBJECT IDENTIFIER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "The OID to the item that can trigger this SMS message."
+        ::= { Alarm-Message-Entry 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Cellular(5).Target-Phone-Numbers(3)
+    Phone-Numbers-Count OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+           "The number of SMS messages defined for alarm scenarios."
+        ::= { Target-Phone-Numbers 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Cellular(5).Target-Phone-Numbers(3)
+    Phone-Numbers-Table OBJECT-TYPE
+        SYNTAX  SEQUENCE OF Phone-Number-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "A list of all the SMS messages defined for different scenarios."
+        ::= { Target-Phone-Numbers 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Phone-Number-Entry OBJECT-TYPE
+        SYNTAX  Phone-Number-Entry
+        ACCESS  not-accessible
+        STATUS  mandatory
+        DESCRIPTION
+            "An entry containing the SMS message and the OID of the input
+             item that can trigger this SMS message."
+        INDEX
+        {
+            Phone-Number-Index
+        }
+        ::= { Phone-Numbers-Table 1 }
+
+    Phone-Number-Entry ::=
+        SEQUENCE {
+            Phone-Number-Index          INTEGER,
+            Phone-Number-Value          OCTET STRING
+        }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Phone-Number-Index OBJECT-TYPE
+        SYNTAX  INTEGER
+        ACCESS  read-only
+        STATUS  current
+        DESCRIPTION
+            "A unique value for each phone number. Its value
+            ranges between 1 and the value of Phone-Numbers-Count."
+        ::= { Phone-Number-Entry 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
+    Phone-Number-Value OBJECT-TYPE
+        SYNTAX  OCTET STRING (SIZE(13))
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The phone number to be used as the SMS target. It must be in
+             +XXYYYZZZZZZZ format,
+             where  +XX         is the country code.
+                     YYY        is the operator code.
+                     ZZZZZZZ    is the phone number.
+             For example: +989121234567
+            "
+        ::= { Phone-Number-Entry 2 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                              Traps Collection                              --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Network-Traps               OBJECT IDENTIFIER ::= { Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Environmental-Traps         OBJECT IDENTIFIER ::= { Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Input-Traps                 OBJECT IDENTIFIER ::= { Traps 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Maintenance-Traps           OBJECT IDENTIFIER ::= { Traps 4 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Web-Service-Traps           OBJECT IDENTIFIER ::= { Traps 5 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    Cellular-Traps              OBJECT IDENTIFIER ::= { Traps 6 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6)
+    External-Traps              OBJECT IDENTIFIER ::= { Traps 7 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Network-Traps(1)
+    Agent-Unreachable NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Agent-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap means a configured SNMP agent is not unreachable
+             or is not responding to the SNMP requests."
+        ::= { Network-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Network-Traps(1)
+    Possible-DDOS NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap means the device is receiving a huge amount of
+             IP packets in a short amount of time. This can be a sign
+             of a DDOS attack."
+        ::= { Network-Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Environmental-Traps(2)
+    Critical-Temperature NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Temperature
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap means the temperature has reached the critical level."
+        ::= { Environmental-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Environmental-Traps(2)
+    Critical-Humidity NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Humidity
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap means the humidity has reached the critical level."
+        ::= { Environmental-Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Input-Traps(3)
+    Alarm-Trigger NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            inputEntry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when an input goes high during it's
+             activation time, regardless of relays being manual or
+             automatic."
+        ::= { Input-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Maintenance-Traps(4)
+    SIM800-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when SIM800 module doesn't respond in
+             15 mintues. During this period, the SIM800 module gets
+             restarted for roughly 30 times, and the trap happens only
+             if the SIM800 module doesn't respond back after every
+             single restart attempt."
+        ::= { Maintenance-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Maintenance-Traps(4)
+    DS1307-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when the DS1307 stops working. DS1307
+             is the device's real time clock and claendar module."
+        ::= { Maintenance-Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Maintenance-Traps(4)
+    EEPROM-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when the EEPROM stops working.
+             Please note that the EEPROM is the device's storage
+             space, and the device wont boot the next time it
+             turns on while the EEPROM is not working since many
+             critical settings required for a successful boot are
+             stored on the EEPROM memory."
+        ::= { Maintenance-Traps 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Web-Service-Traps(5)
+    Login-Trap NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Active-Connection-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when ever someone logs into the webservice."
+        ::= { Web-Service-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Web-Service-Traps(5)
+    Login-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Active-Connection-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when ever a login attempt fails due to
+             the wrong password."
+        ::= { Web-Service-Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Web-Service-Traps(5)
+    Webservice-Setting-Trap NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Active-Connection-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when ever someone makes a change to the
+             device using the web service setting pages. The trap will
+             be produced before the settings taking place, so the trap
+             receiver is guaranteed to receive this trap."
+        ::= { Web-Service-Traps 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Web-Service-Traps(5)
+    Webservice-Failed-Setting-Trap NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Active-Connection-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when ever someone tries to make a change
+             inside device settings using the web service, but provides
+             the wrong password."
+        ::= { Web-Service-Traps 4 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Web-Service-Traps(5)
+    Webservice-Illegal-Access-Trap NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level,
+            Active-Connection-Entry
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens when ever someone tries to access an
+             undefined URL, or pass wrong data to the web-service.
+             This trap can alert the mangager of a possible hack
+             attempt."
+        ::= { Web-Service-Traps 5 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Cellular-Traps(6)
+    SIM-Not-Found NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens if the device can't find the SIM card.
+             This trap will be produced each time the SIM800 module is
+             restarted and can't detect the SIM card."
+        ::= { Cellular-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Cellular-Traps(6)
+    Network-Registration-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens if the device can't register itself
+             on the cellular network for 5 mintues."
+        ::= { Cellular-Traps 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).Cellular-Traps(6)
+    GSM-Network-Registration-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens if the device can't register itself
+             on the GSM network for 5 mintues."
+        ::= { Cellular-Traps 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).External-Traps(7)
+    Energy-Analyzer-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens if the energy analyzer doesn't respond
+             back to the MODBUS read requests for 5 minutes."
+        ::= { External-Traps 1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps(6).External-Traps(7)
+    SHT20-Failure NOTIFICATION-TYPE
+        OBJECTS
+        {
+            Trap-Severity-Level
+        }
+        STATUS  current
+        DESCRIPTION
+            "This trap happens if the SHT20 sensor stops responding.
+             SHT20 is the temperature and humidity sensor of the device."
+        ::= { External-Traps 2 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                               Traps Settings                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps-Settings(7)
+    Trap-Receiver                   OBJECT IDENTIFIER ::= { Traps-Settings  1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps-Settings(7)
+    Debug-Trap-Receiver             OBJECT IDENTIFIER ::= { Traps-Settings  2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps-Settings(7)
+    Trap-Toggles                    OBJECT IDENTIFIER ::= { Traps-Settings  3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Network-Traps-Toggles           OBJECT IDENTIFIER ::= { Trap-Toggles    1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Environmental-Traps-Toggles     OBJECT IDENTIFIER ::= { Trap-Toggles    2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Input-Traps-Toggles             OBJECT IDENTIFIER ::= { Trap-Toggles    3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Maintenance-Traps-Toggles       OBJECT IDENTIFIER ::= { Trap-Toggles    4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Web-Service-Traps-Toggles       OBJECT IDENTIFIER ::= { Trap-Toggles    5 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    Cellular-Traps-Toggles          OBJECT IDENTIFIER ::= { Trap-Toggles    6 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Toggles(3)
+    External-Traps-Toggles          OBJECT IDENTIFIER ::= { Trap-Toggles    7 }
+
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Receiver(1)
+    IP OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The IP address of the SNMP manager who is supposed to receive
+             traps generated by the SNMP agent module of this device."
+        ::= { Trap-Receiver 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Receiver(1)
+    Port OBJECT-TYPE
+        SYNTAX  PortNumber
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 162 }
+        DESCRIPTION
+            "The port number of the SNMP manager who is supposed to receive
+             traps generated by the SNMP agent module of this device."
+        ::= { Trap-Receiver 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Debug-Trap-Receiver(2)
+    IP OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "The IP address of the SNMP manager who is supposed to receive
+             debugging traps generated by this device.
+             Please note that the debugging traps are disabled if
+             the source code is not in development mode."
+        ::= { Debug-Trap-Receiver 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Debug-Trap-Receiver(2)
+    Port OBJECT-TYPE
+        SYNTAX  PortNumber
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 162 }
+        DESCRIPTION
+            "The port number of the SNMP manager who is supposed to receive
+             debugging traps generated by this device.
+             Please note that the debugging traps are disabled if
+             the source code is not in development mode."
+        ::= { Debug-Trap-Receiver 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Network-Traps-Toggles(1)
+    Agent-Unreachable OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Network-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Network-Traps-Toggles(1)
+    Possible-DDOS OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Network-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Environmental-Traps-Toggles(2)
+    Critical-Temperature OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Environmental-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Environmental-Traps-Toggles(2)
+    Critical-Humidity OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Environmental-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Input-Traps-Toggles(3)
+    Alarm-Trigger OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Input-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
+    SIM800-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Maintenance-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
+    DS1307-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Maintenance-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
+    EEPROM-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Maintenance-Traps-Toggles 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
+    Login-Trap OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Web-Service-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
+    Login-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Web-Service-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
+    Webservice-Setting-Trap OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Web-Service-Traps-Toggles 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
+    Webservice-Failed-Setting-Trap OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Web-Service-Traps-Toggles 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
+    Webservice-Illegal-Access-Trap OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Web-Service-Traps-Toggles 5 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
+    SIM-Not-Found OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Cellular-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
+    Network-Registration-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Cellular-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
+    GSM-Network-Registration-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { Cellular-Traps-Toggles 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).External-Traps-Toggles(7)
+    Energy-Analyzer-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { External-Traps-Toggles 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).External-Traps-Toggles(7)
+    SHT20-Failure OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DESCRIPTION
+            "Enables or Disables the respective trap."
+        ::= { External-Traps-Toggles 2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps-Settings(7)
+    Maximum-Trap-Level OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+            emergency     (0),      --system is unusable
+            alert         (1),      --action must be taken immediately
+            critical      (2),      --critical conditions
+            error         (3),      --error conditions
+            warning       (4),      --warning conditions
+            notice        (5),      --normal but significant condition
+            informational (6),      --informational messages
+            debug         (7)       --debug-level messages
+        }
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+            "This objects dictates which traps are supposed to be generated.
+             For example if this object is set to 'critical(2)', only the top
+             3 severity traps will be sent to the trap receiver.
+             top 3 severity traps are:
+                 emergency     (0)
+                 alert         (1)
+                 critical      (2)"
+        ::= { Traps-Settings 4 }
+
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Traps-Settings(7)
+    Persistent-Trap-Interval OBJECT-TYPE
+        SYNTAX  INTEGER (1..60)
+        ACCESS  read-write
+        STATUS  mandatory
+        DESCRIPTION
+            "This objects defines the interval, in minutes, between the
+             generation of each specific trap. For example if the SHT20
+             module is not working, and this object is set to 5, the
+             SHT20-Failure trap will be produced every 5 minutes.
+             Please note that this setting ONLY applies to the persistent
+             trap conditions and doesn't affect one-time traps like the
+             Login-Trap."
+        ::= { Traps-Settings 5 }
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                              Device Settings                               --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Settings(8)
+    Network-Settings            OBJECT IDENTIFIER ::= { Device-Settings    1 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Settings(8)
+    Environmental-Settings      OBJECT IDENTIFIER ::= { Device-Settings    2 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Settings(8)
+    Alarm-Settings              OBJECT IDENTIFIER ::= { Device-Settings    3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Settings(8)
+    Reboot-Functions            OBJECT IDENTIFIER ::= { Device-Settings    4 }
+
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    IP-Address OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 192.168.1.13 }
+        DESCRIPTION
+            "The static IP address of this device on the network."
+        ::= { Network-Settings 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    Network-Mask OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 255.255.255.0 }
+        DESCRIPTION
+            "The network mask of the device's subnet."
+        ::= { Network-Settings 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    Gateway OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 192.168.1.13 }
+        DESCRIPTION
+            "The network's gateway IP address."
+        ::= { Network-Settings 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    DNS-Preffered OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 4.2.2.4 }
+        DESCRIPTION
+            "The preffered DNS server's IP address."
+        ::= { Network-Settings 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    DNS-Alternative OBJECT-TYPE
+        SYNTAX  IpAddress
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 8.8.8.8 }
+        DESCRIPTION
+            "The alternative DNS server's IP address."
+        ::= { Network-Settings 5 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Network-Settings(1)
+    ICMP-Status OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Disabled(0),
+           Enabled(1)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { Enabled(1) }
+        DESCRIPTION
+            "This option dictates if the devices responds back to the
+             ICMP (ping) requests."
+        ::= { Network-Settings 6 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Environmental-Settings(2)
+    Temperature-Point OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 25.00 }
+        DESCRIPTION
+            "The temperature value at which the device will activate
+             the cooling systems."
+        ::= { Environmental-Settings 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Environmental-Settings(2)
+    Humidity-Point OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 60.00 }
+        DESCRIPTION
+            "The humidity value at which the device will activate
+             the cooling systems."
+        ::= { Environmental-Settings 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Environmental-Settings(2)
+    Temperature-Critical OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 40.00 }
+        DESCRIPTION
+            "The temperature value at which the device will send
+             trap messages. Please note that this trap message can
+             be disabled using the Trap-Settings OIDs."
+        ::= { Environmental-Settings 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Environmental-Settings(2)
+    Humidity-Critical OBJECT-TYPE
+        SYNTAX  FLOAT
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 80.00 }
+        DESCRIPTION
+            "The humidity value at which the device will send trap
+             messages. Please note that this trap message can be
+             disabled using the Trap-Settings OIDs."
+        ::= { Environmental-Settings 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Alarm-Settings(3)
+    Activation-Time OBJECT-TYPE
+        SYNTAX  TIME-OF-DAY
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 00:00:00 }
+        DESCRIPTION
+            "The time at which the alarms start working."
+        ::= { Alarm-Settings 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Alarm-Settings(3)
+    Deactivation-Time OBJECT-TYPE
+        SYNTAX  TIME-OF-DAY
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 23:59:59 }
+        DESCRIPTION
+            "The time at which the alarms stop working."
+        ::= { Alarm-Settings 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Settings(8).Reboot-Functions(4)
+    Reboot OBJECT-TYPE
+        SYNTAX  INTEGER
+        {
+           Keep-Alive(0),
+           Reboot(1),
+           Save-And-Reboot(2)
+        }
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { Keep-Alive(0) }
+        DESCRIPTION
+            "This option can be used to reboot the device and/or save the
+             settings given to the device using the SNMP protocol."
+        ::= { Reboot-Functions 1 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--                             Device Information                             --
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Info(9)
+    Hardware-Status             OBJECT IDENTIFIER ::= { Device-Info        1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Hardware-Status(1)
+    EEPROM-Status OBJECT-TYPE
+    SYNTAX  INTEGER
+    {
+        Malfunctioning(0),
+        Healthy(1)
+    }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The status of the EEPROM IC."
+    ::= { Hardware-Status 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Hardware-Status(1)
+    DS1307-Status OBJECT-TYPE
+    SYNTAX  INTEGER
+    {
+       Malfunctioning(0),
+       Healthy(1)
+    }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+       "The status of the DS1307 IC, the realtime clock and calendar module."
+    ::= { Hardware-Status 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Hardware-Status(1)
+    RGB-Status OBJECT-TYPE
+    SYNTAX  INTEGER
+    {
+        Off(0),
+        Red(1),
+        Green(2),
+        Blue(3),
+        Cyan(4),
+        Yellow(5),
+        Magenta(6),
+        White(7)
+    }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+       "The color of the RGB LED on the device."
+    ::= { Hardware-Status 3 }
+
+    -- 1.3.6.1.4.1.59097.1.SNMP-Monitoring(1).Device-Info(9)
+    Version-Info                OBJECT IDENTIFIER ::= { Device-Info        2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    Hardware-Version OBJECT-TYPE
+    SYNTAX  DisplayString
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The version of the device's hardware."
+    ::= { Version-Info 1 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    Software-Version OBJECT-TYPE
+    SYNTAX  DisplayString
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The version of the device's software."
+    ::= { Version-Info 2 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    Software-Relese-Date OBJECT-TYPE
+    SYNTAX  DisplayString
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The release date of the software."
+    ::= { Version-Info 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    Relese-Status OBJECT-TYPE
+    SYNTAX  INTEGER
+    {
+        Development(0),
+        Alpha(1),
+        Closed-Beta(2),
+        Beta(3),
+        Release(4)
+    }
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+       "The status of the current running software."
+   ::= { Version-Info 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    MAC-Address OBJECT-TYPE
+    SYNTAX  MacAddress
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The mac address of the device."
+    ::= { Device-Info 3 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    MIB-URL OBJECT-TYPE
+    SYNTAX  DisplayString
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The permanent URL to the device's MIB files."
+    ::= { Device-Info 4 }
+
+    -- 1.3.6.1.4.1.59097.1.1.Device-Info(9).Version-Info(2)
+    Issue-Tracker OBJECT-TYPE
+    SYNTAX  DisplayString
+    ACCESS  read-only
+    STATUS  current
+    DESCRIPTION
+        "The permanent URL to the device's issue tracker."
+    ::= { Device-Info 5 }
+
+END
