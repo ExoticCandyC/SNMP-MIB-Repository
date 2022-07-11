@@ -316,7 +316,7 @@ EC-Base DEFINITIONS ::= BEGIN
             informational (6),      --informational messages
             debug         (7)       --debug-level messages
         }
-        ACCESS  read-only
+        ACCESS  accessible-for-notify
         STATUS  mandatory
         DESCRIPTION
             "Severity level of the message"
