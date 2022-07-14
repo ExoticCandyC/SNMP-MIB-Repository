@@ -21,7 +21,7 @@ SNMP tools are pre-installed on GNU-Linux based operating systems and all of the
 For example, to read a table from the SNMP enabled device/software, you can use the following code:
 
 ```bash
-snmptable -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-PORT] [TABLE-OID]
+snmptable -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-SNMP-PORT] [TABLE-OID]
 ```
 
 # SNMP Project Files
