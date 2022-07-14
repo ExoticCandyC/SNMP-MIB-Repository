@@ -12,6 +12,18 @@ For Android devices, my suggestion is "SNMP Manager" by "Gao Feng"
 
 https://play.google.com/store/apps/details?id=snmpmanager.feng.gao&hl=en&gl=US
 
+# Operating system
+
+The official supported operating system for all my codes is GNU-Linux based operating systems. All the testings are done on Arch-Linux with community packages.
+
+SNMP tools are pre-installed on GNU-Linux based operating systems and all of them are supported.
+
+For example, to read a table from the SNMP enabled device/software, you can use the following code:
+
+```bash
+snmptable -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-PORT] [TABLE-OID]
+```
+
 # SNMP Project Files
 | Project Name | MIB file name | Project Version |
 | --- | --- | --- |
