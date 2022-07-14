@@ -14,7 +14,7 @@ https://play.google.com/store/apps/details?id=snmpmanager.feng.gao&hl=en&gl=US
 
 # Operating system
 
-The official supported operating system for all my codes is GNU-Linux based operating systems. All the testings are done on Arch-Linux with community packages.
+The official supported operating system for all my codes is GNU-Linux based operating systems. All the testings are done on Arch-Linux using the community packages, not the testing or AUR packages.
 
 SNMP tools are pre-installed on GNU-Linux based operating systems and all of them are supported.
 
