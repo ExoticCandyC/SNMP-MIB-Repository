@@ -24,6 +24,12 @@ For example, to read a table from the SNMP enabled device/software, you can use 
 snmptable -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-SNMP-PORT] [TABLE-OID]
 ```
 
+To read values of a folder inside the MIB, you can use "snmpbulkwalk"
+
+```bash
+snmpbulkwalk -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-SNMP-PORT] [DIRECTORY-OID]
+```
+
 # SNMP Project Files
 | Project Name | MIB file name | Project Version |
 | --- | --- | --- |
