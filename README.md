@@ -30,6 +30,14 @@ To read values of a folder inside the MIB, you can use "snmpbulkwalk"
 snmpbulkwalk -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-SNMP-PORT] [DIRECTORY-OID]
 ```
 
+To read all the SNMP objects of the device/software, you can use "snmpbulkwalk" using the following syntax:
+
+```bash
+snmpbulkwalk -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER] -m [PATH-TO-THE-MIB-FILE] [DEVICE-IP]:[DEVICE-SNMP-PORT] .
+```
+
+Please note that "." is a refference to the root of the MIB tree.
+
 # SNMP Project Files
 | Project Name | MIB file name | Project Version |
 | --- | --- | --- |
