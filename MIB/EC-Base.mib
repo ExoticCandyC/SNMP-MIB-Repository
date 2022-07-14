@@ -228,9 +228,12 @@ EC-Base DEFINITIONS ::= BEGIN
     PhoneNumber ::= TEXTUAL-CONVENTION
         STATUS       current
         DESCRIPTION
-            "Phone number in it's international form. An example can be
-             +989121234567"
-        SYNTAX      OCTET STRING (SIZE (13))
+            "Phone number in it's international form, or national form.
+             E.G.
+                +989121234567
+                  09121234567
+            "
+        SYNTAX      OCTET STRING (SIZE (11..13))
 
 
 --------------------------------------------------------------------------------
