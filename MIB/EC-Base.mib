@@ -224,6 +224,14 @@ EC-Base DEFINITIONS ::= BEGIN
              integer, starting from 0 through 65535."
         SYNTAX      INTEGER (0..65535)
 
+    -- Define the Phone number
+    PhoneNumber ::= TEXTUAL-CONVENTION
+        STATUS       current
+        DESCRIPTION
+            "Phone number in it's international form. An example can be
+             +989121234567"
+        SYNTAX      OCTET STRING (SIZE (13))
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

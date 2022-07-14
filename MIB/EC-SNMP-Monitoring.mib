@@ -55,6 +55,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         TIME,
         IpAddress,
         PortNumber,
+        PhoneNumber,
         Counter32,
         Gauge32,
         Opaque,
@@ -1104,7 +1105,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
     Phone-Number-Entry ::=
         SEQUENCE {
             Phone-Number-Index          INTEGER,
-            Phone-Number-Value          OCTET STRING
+            Phone-Number-Value          PhoneNumber
         }
 
     -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
@@ -1119,7 +1120,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
 
     -- 1.3.6.1.4.1.59097.1.1.5.Alram-Messages(2).Alarm-Messages-Table(3)
     Phone-Number-Value OBJECT-TYPE
-        SYNTAX  OCTET STRING (SIZE(13))
+        SYNTAX  PhoneNumber
         ACCESS  read-write
         STATUS  current
         DESCRIPTION
