@@ -450,7 +450,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
     Trap-Redirection-Target     OBJECT IDENTIFIER ::= { SNMP-Manager       1 }
 
     -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Trap-Redirection-Target(1)
-    IP OBJECT-TYPE
+    Trap-Redirection-IP OBJECT-TYPE
         SYNTAX  IpAddress
         ACCESS  read-write
         STATUS  current
@@ -460,7 +460,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Trap-Redirection-Target 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2).Trap-Redirection-Target(1)
-    Port OBJECT-TYPE
+    Trap-Redirection-Port OBJECT-TYPE
         SYNTAX  PortNumber
         ACCESS  read-write
         STATUS  current
@@ -471,7 +471,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Trap-Redirection-Target 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.SNMP-Manager(2)
-    Query-Interval OBJECT-TYPE
+    Agents-Query-Interval OBJECT-TYPE
         SYNTAX  Unsigned32
         ACCESS  read-write
         STATUS  current
@@ -588,7 +588,8 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         SYNTAX  INTEGER
         {
             Unreachable(0),
-            Active(1)
+            Active(1),
+            Not-Initialized(2)
         }
         ACCESS  read-only
         STATUS  current
@@ -615,7 +616,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
 --    Energy-Analyzer             OBJECT IDENTIFIER ::= { SNMP-Monitoring    3 }
 
     -- 1.3.6.1.4.1.59097.1.1.Energy-Analyzer(3)
-    Query-Interval OBJECT-TYPE
+    EA-Query-Interval OBJECT-TYPE
         SYNTAX  Unsigned32
         ACCESS  read-write
         STATUS  current
@@ -874,6 +875,18 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
              the device slower."
         ::= { Web-Service-Settings 3 }
 
+    -- 1.3.6.1.4.1.59097.1.1.Web-Service(4).Web-Service-Settings(2)
+    Home-Refresh-Rate OBJECT-TYPE
+        SYNTAX  Unsigned32 (1000..10000)
+        ACCESS  read-write
+        STATUS  current
+        DEFVAL  { 2000 }
+        DESCRIPTION
+            "The refresh rate of the web-service's homepage in milliseconds.
+             please note that lower refresh rate will render the device
+             slower as it has to answer all the TCP queries it is receiving."
+        ::= { Web-Service-Settings 4 }
+
     -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Settings(2).Web-Service-Buzzer(1)
     Enable OBJECT-TYPE
         SYNTAX  INTEGER
@@ -892,17 +905,17 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         SYNTAX  INTEGER (1..10)
         ACCESS  read-write
         STATUS  current
-        DEFVAL  { 3 }
+        DEFVAL  { 2 }
         DESCRIPTION
             "Number of buzzer beeps played when a web-service login happens."
         ::= { Web-Service-Buzzer 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.4.Web-Service-Settings(2).Web-Service-Buzzer(1)
     Beep-Duration OBJECT-TYPE
-        SYNTAX  INTEGER (30..100)
+        SYNTAX  INTEGER (30..1000)
         ACCESS  read-write
         STATUS  current
-        DEFVAL  { 30 }
+        DEFVAL  { 300 }
         DESCRIPTION
             "The duration of each beep in milliseconds."
         ::= { Web-Service-Buzzer 3 }
@@ -1435,7 +1448,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
 
 
     -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Receiver(1)
-    IP OBJECT-TYPE
+    Trap-Receiver-IP OBJECT-TYPE
         SYNTAX  IpAddress
         ACCESS  read-write
         STATUS  current
@@ -1445,7 +1458,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Trap-Receiver 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Trap-Receiver(1)
-    Port OBJECT-TYPE
+    Trap-Receiver-Port OBJECT-TYPE
         SYNTAX  PortNumber
         ACCESS  read-write
         STATUS  current
@@ -1456,7 +1469,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Trap-Receiver 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Debug-Trap-Receiver(2)
-    IP OBJECT-TYPE
+    Debug-Trap-Receiver-IP OBJECT-TYPE
         SYNTAX  IpAddress
         ACCESS  read-write
         STATUS  current
@@ -1468,7 +1481,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Debug-Trap-Receiver 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.Traps-Settings(7).Debug-Trap-Receiver(2)
-    Port OBJECT-TYPE
+    Debug-Trap-Receiver-Port OBJECT-TYPE
         SYNTAX  PortNumber
         ACCESS  read-write
         STATUS  current
@@ -1481,7 +1494,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Debug-Trap-Receiver 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Network-Traps-Toggles(1)
-    Agent-Unreachable OBJECT-TYPE
+    Toggle-Agent-Unreachable OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1489,12 +1502,13 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         }
         ACCESS  read-write
         STATUS  current
+        DEFVAL  { Enabled(1) }
         DESCRIPTION
-            "Enables or Disables the respective trap."
+            "Enables or Disables the respective trap. (Agent-Unreachable)"
         ::= { Network-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Network-Traps-Toggles(1)
-    Possible-DDOS OBJECT-TYPE
+    Toggle-Possible-DDOS OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1507,7 +1521,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Network-Traps-Toggles 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Environmental-Traps-Toggles(2)
-    Critical-Temperature OBJECT-TYPE
+    Toggle-Critical-Temperature OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1520,7 +1534,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Environmental-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Environmental-Traps-Toggles(2)
-    Critical-Humidity OBJECT-TYPE
+    Toggle-Critical-Humidity OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1532,12 +1546,13 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
             "Enables or Disables the respective trap."
         ::= { Environmental-Traps-Toggles 2 }
 
+
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Input-Traps-Toggles(3)
-    Alarm-Trigger OBJECT-TYPE
+    Toggle-Alarm-Trigger OBJECT-TYPE
         SYNTAX  INTEGER
         {
-           Disabled(0),
-           Enabled(1)
+            Disabled(0),
+            Enabled(1)
         }
         ACCESS  read-write
         STATUS  current
@@ -1546,7 +1561,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Input-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
-    SIM800-Failure OBJECT-TYPE
+    Toggle-SIM800-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1559,7 +1574,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Maintenance-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
-    DS1307-Failure OBJECT-TYPE
+    Toggle-DS1307-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1572,7 +1587,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Maintenance-Traps-Toggles 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Maintenance-Traps-Toggles(4)
-    EEPROM-Failure OBJECT-TYPE
+    Toggle-EEPROM-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1585,7 +1600,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Maintenance-Traps-Toggles 3 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
-    Login-Trap OBJECT-TYPE
+    Toggle-Login-Trap OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1598,7 +1613,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Web-Service-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
-    Login-Failure OBJECT-TYPE
+    Toggle-Login-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1611,7 +1626,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Web-Service-Traps-Toggles 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
-    Webservice-Setting-Trap OBJECT-TYPE
+    Toggle-Webservice-Setting-Trap OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1624,7 +1639,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Web-Service-Traps-Toggles 3 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
-    Webservice-Failed-Setting-Trap OBJECT-TYPE
+    Toggle-Webservice-Failed-Setting-Trap OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1637,7 +1652,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Web-Service-Traps-Toggles 4 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Web-Service-Traps-Toggles(5)
-    Webservice-Illegal-Access-Trap OBJECT-TYPE
+    Toggle-Webservice-Illegal-Access-Trap OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1650,7 +1665,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Web-Service-Traps-Toggles 5 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
-    SIM-Not-Found OBJECT-TYPE
+    Toggle-SIM-Not-Found OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1663,7 +1678,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Cellular-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
-    Network-Registration-Failure OBJECT-TYPE
+    Toggle-Network-Registration-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1676,7 +1691,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Cellular-Traps-Toggles 2 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).Cellular-Traps-Toggles(6)
-    GSM-Network-Registration-Failure OBJECT-TYPE
+    Toggle-GSM-Network-Registration-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1689,7 +1704,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { Cellular-Traps-Toggles 3 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).External-Traps-Toggles(7)
-    Energy-Analyzer-Failure OBJECT-TYPE
+    Toggle-Energy-Analyzer-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1702,7 +1717,7 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         ::= { External-Traps-Toggles 1 }
 
     -- 1.3.6.1.4.1.59097.1.1.7.Trap-Toggles(3).External-Traps-Toggles(7)
-    SHT20-Failure OBJECT-TYPE
+    Toggle-SHT20-Failure OBJECT-TYPE
         SYNTAX  INTEGER
         {
            Disabled(0),
@@ -1912,14 +1927,18 @@ EC-SNMP-Monitoring DEFINITIONS ::= BEGIN
         {
            Keep-Alive(0),
            Reboot(1),
-           Save-And-Reboot(2)
+           Save-IP-Settings(2)
         }
         ACCESS  read-write
         STATUS  current
         DEFVAL  { Keep-Alive(0) }
         DESCRIPTION
-            "This option can be used to reboot the device and/or save the
-             settings given to the device using the SNMP protocol."
+            "This option can be used to reboot the device OR save the
+             IP settings given to the device using the SNMP protocol.
+             Since a change in the IP can render the device inaccessible,
+             device will load previous IP settings if this OID is not used
+             to save the IP settings after 30 seconds. Please note that
+             the saving process will NOT cause a reboot."
         ::= { Reboot-Functions 1 }
 
 --------------------------------------------------------------------------------

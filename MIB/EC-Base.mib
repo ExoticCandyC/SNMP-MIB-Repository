@@ -1278,7 +1278,7 @@ EC-Base DEFINITIONS ::= BEGIN
 --------------------------------------------------------------------------------
 
     -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-General-Devices(1)
-    Node-Summary OBJECT-TYPE
+    Devices-Node-Summary OBJECT-TYPE
         SYNTAX      OCTET STRING
         MAX-ACCESS  not-accessible
         STATUS      current
@@ -1289,7 +1289,7 @@ EC-Base DEFINITIONS ::= BEGIN
         ::= { EC-General-Devices 0 }
 
     -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-General-Software(2)
-    Node-Summary OBJECT-TYPE
+    Software-Node-Summary OBJECT-TYPE
         SYNTAX      OCTET STRING
         MAX-ACCESS  not-accessible
         STATUS      current
@@ -1300,7 +1300,7 @@ EC-Base DEFINITIONS ::= BEGIN
         ::= { EC-General-Software 0 }
 
     -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-Generic-Traps(3)
-    Node-Summary OBJECT-TYPE
+    Traps-Node-Summary OBJECT-TYPE
         SYNTAX      OCTET STRING
         MAX-ACCESS  not-accessible
         STATUS      current
@@ -1310,7 +1310,7 @@ EC-Base DEFINITIONS ::= BEGIN
         ::= { EC-Generic-Traps 0 }
 
     -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-Experimental(4)
-    Node-Summary OBJECT-TYPE
+    Experimental-Node-Summary OBJECT-TYPE
         SYNTAX      OCTET STRING
         MAX-ACCESS  not-accessible
         STATUS      current
@@ -1319,7 +1319,7 @@ EC-Base DEFINITIONS ::= BEGIN
         ::= { EC-Experimental 0 }
 
     -- 1.3.6.1.4.enterprises(1).ExoticCandy-MIB(59097).EC-Information(5)
-    Node-Summary OBJECT-TYPE
+    Information-Node-Summary OBJECT-TYPE
         SYNTAX      OCTET STRING
         MAX-ACCESS  not-accessible
         STATUS      current
