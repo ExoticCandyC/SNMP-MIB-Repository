@@ -39,8 +39,8 @@ snmpbulkwalk -v [SNMP-VERSION] -c [COMMUNITY-STRING] -M [PATH-TO-THE-MIB-FOLDER]
 Please note that "." is a refference to the root of the MIB tree.
 
 # SNMP Project Files
-| Project Name | MIB file name | Project Version |
-| --- | --- | --- |
-| MIB dependencies | EC-Base.mib | v1.0.0 |
-| SNMP monitoring | EC-SNMP-Monitoring.mib | v4.0.1a |
+| Project Name | MIB file name |‌ SNMP Version | Project Version |
+| --- | --- | --- | --- |
+| MIB dependencies | EC-Base.mib | SNMPv2c | v1.0.0 |
+| SNMP monitoring | EC-SNMP-Monitoring.mib | SNMPv2c | v4.0.1a |
 
